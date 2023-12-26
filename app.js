@@ -1,9 +1,9 @@
 require('dotenv').config();
-
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const router = require('./routes');
+
 const app = express();
 const { PORT, MONGO_URL } = process.env;
 
@@ -12,10 +12,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect(MONGO_URL);
 
-//Temporary solution
+// Temporary solution
 app.use((req, res, next) => {
   req.user = {
-    _id: '65897cafbcc206d59871ea2a'
+    id: '658a50f5632cbd090cf81400',
   };
 
   next();
@@ -23,6 +23,4 @@ app.use((req, res, next) => {
 
 app.use(router);
 
-app.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}`);
-});
+app.listen(PORT);
