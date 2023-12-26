@@ -1,5 +1,10 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
+В данный момент в процессе реализации бэкенд для проекта Mesto - интерактивной фотогалереи
+
+**Технологии проекта:**
+* Nodejs / Express
+* Git
 
 ## Директории
 
@@ -16,4 +21,4 @@
 
 ## Ссылка
 
-[GitHub](https://github.com/andrey-nurullin/express-mesto-gha)
+[Репозиторий проекта](https://github.com/andrey-nurullin/express-mesto-gha)
