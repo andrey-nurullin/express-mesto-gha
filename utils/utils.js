@@ -7,4 +7,4 @@ module.exports.handleError = (err, res) => {
     default:
       return res.status(500).send({ message: 'Ошибка сервера' });
   }
-}
+};
