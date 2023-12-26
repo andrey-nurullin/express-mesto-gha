@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { handleError } = require('../utils/utils');
+const { NotFoundError, handleError } = require('../utils/utils');
 
 module.exports.getCards = (req, res) => Card.find({})
   .populate('likes')
@@ -15,6 +15,7 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => Card.deleteOne({ _id: req.params.cardId })
+  .orFail(() => new NotFoundError())
   .then(() => res.send({ message: 'Карточка удалена' }))
   .catch((err) => handleError(err, res));
 
@@ -23,6 +24,7 @@ module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
   { new: true },
 )
+  .orFail(() => new NotFoundError())
   .populate('likes')
   .then((card) => res.send(card))
   .catch((err) => handleError(err, res));
@@ -32,6 +34,7 @@ module.exports.dislikeCard = (req, res) => Card.findByIdAndUpdate(
   { $pull: { likes: req.user._id } }, // убрать _id из массива
   { new: true },
 )
+  .orFail(() => new NotFoundError())
   .populate('likes')
   .then((card) => res.send(card))
   .catch((err) => handleError(err, res));

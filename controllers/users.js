@@ -1,5 +1,5 @@
 const User = require('../models/user');
-const { handleError } = require('../utils/utils');
+const { NotFoundError, handleError } = require('../utils/utils');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -9,6 +9,7 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
+    .orFail(() => new NotFoundError())
     .then((user) => res.send(user))
     .catch((err) => handleError(err, res));
 };
@@ -23,6 +24,7 @@ module.exports.createUser = (req, res) => {
 
 module.exports.updateUser = (req, res) => {
   User.findOneAndUpdate({ _id: req.user._id }, req.body, { new: true, runValidators: true })
+    .orFail(() => new NotFoundError())
     .then((user) => res.send(user))
     .catch((err) => handleError(err, res));
 };
