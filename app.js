@@ -5,12 +5,12 @@ const bodyParser = require('body-parser');
 const router = require('./routes');
 
 const app = express();
-const { PORT, MONGO_URL } = process.env;
+const { PORT } = process.env;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect(MONGO_URL);
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 // Temporary solution
 app.use((req, res, next) => {
