@@ -1,5 +1,8 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const { httpStatus, NotFoundError, handleError } = require('../utils/utils');
+
+const SALT_ROUNDS = 10;
 
 module.exports.getUsers = (req, res) => {
   User.find({})
@@ -19,10 +22,12 @@ module.exports.createUser = (req, res) => {
     name, about, avatar, email, password,
   } = req.body;
 
-  User.create({
-    name, about, avatar, email, password,
-  })
-    .then((user) => res.status(httpStatus.CREATED).send(user))
+  bcrypt.hash(password, SALT_ROUNDS)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    })
+      .then((user) => res.status(httpStatus.CREATED).send(user))
+      .catch((err) => handleError(err, res)))
     .catch((err) => handleError(err, res));
 };
 
