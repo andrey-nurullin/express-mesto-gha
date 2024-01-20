@@ -1,8 +1,31 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
-const { httpStatus, NotFoundError, handleError } = require('../utils/utils');
+const {
+  httpStatus, generateToken, NotFoundError, AuthError, handleError,
+} = require('../utils/utils');
 
 const SALT_ROUNDS = 10;
+
+module.exports.login = (req, res) => {
+  const { email, password } = req.body;
+  User.findOne({ email })
+    .orFail(() => new NotFoundError())
+    .select('+password')
+    .then((user) => {
+      const matched = bcrypt.compare(password, user.password);
+      if (!matched) {
+        throw new AuthError();
+      }
+      const token = generateToken({ _id: user._id });
+      res.cookie('authToken', token, {
+        maxAge: 36000,
+        httpOnly: true,
+        sameSite: true,
+      });
+      return res.status(httpStatus.OK).send({});
+    })
+    .catch((err) => handleError(err, res));
+};
 
 module.exports.getUsers = (req, res) => {
   User.find({})
