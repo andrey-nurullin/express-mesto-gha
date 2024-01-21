@@ -1,5 +1,7 @@
 const Card = require('../models/card');
-const { httpStatus, NotFoundError, handleError } = require('../utils/utils');
+const {
+  httpStatus, NotFoundError, handleError, ForbiddenError,
+} = require('../utils/utils');
 
 module.exports.getCards = (req, res) => Card.find({})
   .populate('likes')
@@ -14,10 +16,20 @@ module.exports.createCard = (req, res) => {
     .catch((err) => handleError(err, res));
 };
 
-module.exports.deleteCard = (req, res) => Card.deleteOne({ _id: req.params.cardId })
-  .orFail(() => new NotFoundError())
-  .then(() => res.send({ message: 'Карточка удалена' }))
-  .catch((err) => handleError(err, res));
+module.exports.deleteCard = (req, res) => {
+  const { cardId } = req.params;
+  Card.findById(cardId)
+    .orFail(() => new NotFoundError())
+    .then((c) => {
+      const ownerId = c.owner.toString();
+      const isOwnCard = (req.user._id === ownerId);
+      if (!isOwnCard) throw new ForbiddenError();
+      Card.findByIdAndDelete(cardId)
+        .orFail(() => new NotFoundError())
+        .then(() => res.send({ message: 'Карточка удалена' }));
+    })
+    .catch((err) => handleError(err, res));
+};
 
 module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
   req.params.cardId,
