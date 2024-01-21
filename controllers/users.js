@@ -8,8 +8,10 @@ const SALT_ROUNDS = 10;
 
 module.exports.login = (req, res) => {
   const { email, password } = req.body;
+  if (!(email && password)) handleError(new AuthError(), res);
+
   User.findOne({ email })
-    .orFail(() => new NotFoundError())
+    .orFail(() => new AuthError())
     .select('+password')
     .then((user) => {
       const matched = bcrypt.compare(password, user.password);
@@ -17,13 +19,21 @@ module.exports.login = (req, res) => {
         throw new AuthError();
       }
       const token = generateToken({ _id: user._id });
-      res.cookie('authToken', token, {
-        maxAge: 36000,
-        httpOnly: true,
-        sameSite: true,
-      });
-      return res.status(httpStatus.OK).send({});
+      // TODO: httpOnly Cookies authorization on the frontend-side
+      // res.cookie('authToken', token, {
+      //   maxAge: 36000,
+      //   httpOnly: true,
+      //   sameSite: true,
+      // });
+      return res.status(httpStatus.OK).send({ authToken: token });
     })
+    .catch((err) => handleError(err, res));
+};
+
+module.exports.getUserInfo = (req, res) => {
+  User.findById(req.user._id)
+    .orFail(() => new NotFoundError())
+    .then((user) => res.send(user))
     .catch((err) => handleError(err, res));
 };
 
