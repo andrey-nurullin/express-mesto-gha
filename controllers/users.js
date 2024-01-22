@@ -8,7 +8,6 @@ const SALT_ROUNDS = 10;
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  if (!(email && password)) next(new AuthError());
 
   User.findOne({ email })
     .orFail(() => new AuthError())
@@ -19,12 +18,6 @@ module.exports.login = (req, res, next) => {
         throw new AuthError();
       }
       const token = generateToken({ _id: user._id });
-      // TODO: httpOnly Cookies authorization on the frontend-side
-      // res.cookie('authToken', token, {
-      //   maxAge: 36000,
-      //   httpOnly: true,
-      //   sameSite: true,
-      // });
       return res.status(httpStatus.OK).send({ authToken: token });
     })
     .catch(next);

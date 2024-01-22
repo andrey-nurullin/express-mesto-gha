@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 
 const SECRET_KEY = 'dev_secret';
 
+const URL_PATTERN = /^(https?):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]/;
+
 const httpStatus = {
   OK: 200,
   CREATED: 201,
@@ -21,6 +23,7 @@ const generateToken = (payload) => {
     { expiresIn: '7d' },
   );
 };
+
 /*
 const handleError = (err, res) => {
   switch (err.name) {
@@ -63,5 +66,5 @@ class ForbiddenError extends Error {
 }
 
 module.exports = {
-  httpStatus, NotFoundError, AuthError, ForbiddenError, generateToken, SECRET_KEY,
+  httpStatus, NotFoundError, AuthError, ForbiddenError, generateToken, SECRET_KEY, URL_PATTERN,
 };
