@@ -20,11 +20,7 @@ router.post('/signup', celebrate({
   }),
 }), createUser);
 
-router.use(celebrate({
-  headers: Joi.object().keys({
-    Authorization: Joi.string().required(),
-  }).unknown(true),
-}), auth);
+router.use(auth);
 
 router.use('/users', userRouter);
 router.use('/cards', cardRouter);
