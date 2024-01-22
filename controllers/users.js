@@ -1,14 +1,14 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const {
-  httpStatus, generateToken, NotFoundError, AuthError, handleError,
+  httpStatus, generateToken, NotFoundError, AuthError,
 } = require('../utils/utils');
 
 const SALT_ROUNDS = 10;
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  if (!(email && password)) handleError(new AuthError(), res);
+  if (!(email && password)) next(new AuthError());
 
   User.findOne({ email })
     .orFail(() => new AuthError())
@@ -27,30 +27,30 @@ module.exports.login = (req, res) => {
       // });
       return res.status(httpStatus.OK).send({ authToken: token });
     })
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-module.exports.getUserInfo = (req, res) => {
+module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .orFail(() => new NotFoundError())
     .then((user) => res.send(user))
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-module.exports.getUsers = (req, res) => {
+module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-module.exports.getUserById = (req, res) => {
+module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => new NotFoundError())
     .then((user) => res.send(user))
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-module.exports.createUser = (req, res) => {
+module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
@@ -59,14 +59,13 @@ module.exports.createUser = (req, res) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     })
-      .then((user) => res.status(httpStatus.CREATED).send(user))
-      .catch((err) => handleError(err, res)))
-    .catch((err) => handleError(err, res));
+      .then((user) => res.status(httpStatus.CREATED).send(user)))
+    .catch(next);
 };
 
-module.exports.updateUser = (req, res) => {
+module.exports.updateUser = (req, res, next) => {
   User.findOneAndUpdate({ _id: req.user._id }, req.body, { new: true, runValidators: true })
     .orFail(() => new NotFoundError())
     .then((user) => res.send(user))
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };

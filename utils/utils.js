@@ -10,9 +10,18 @@ const httpStatus = {
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   NOT_FOUND: 404,
+  CONFLICT: 409,
   INTERNAL_SERVER_ERROR: 500,
 };
 
+const generateToken = (payload) => {
+  jwt.sign(
+    payload,
+    SECRET_KEY,
+    { expiresIn: '7d' },
+  );
+};
+/*
 const handleError = (err, res) => {
   switch (err.name) {
     case 'ValidationError':
@@ -28,34 +37,31 @@ const handleError = (err, res) => {
       return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
   }
 };
-
+*/
 class NotFoundError extends Error {
-  constructor() {
-    super();
+  constructor(message = 'Запрашиваемый ресурс не найден') {
+    super(message);
     this.name = 'NotFoundError';
+    this.statusCode = httpStatus.NOT_FOUND;
   }
 }
 
 class AuthError extends Error {
-  constructor() {
-    super();
+  constructor(message = 'Ошибка авторизации') {
+    super(message);
     this.name = 'AuthError';
+    this.statusCode = httpStatus.UNAUTHORIZED;
   }
 }
 
 class ForbiddenError extends Error {
-  constructor() {
-    super();
+  constructor(message = 'Недостаточно прав') {
+    super(message);
     this.name = 'ForbiddenError';
+    this.statusCode = httpStatus.FORBIDDEN;
   }
 }
 
-const generateToken = (payload) => jwt.sign(
-  payload,
-  SECRET_KEY,
-  { expiresIn: '7d' },
-);
-
 module.exports = {
-  httpStatus, NotFoundError, AuthError, ForbiddenError, handleError, generateToken, SECRET_KEY,
+  httpStatus, NotFoundError, AuthError, ForbiddenError, generateToken, SECRET_KEY,
 };
