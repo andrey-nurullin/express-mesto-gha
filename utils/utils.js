@@ -16,13 +16,11 @@ const httpStatus = {
   INTERNAL_SERVER_ERROR: 500,
 };
 
-const generateToken = (payload) => {
-  jwt.sign(
-    payload,
-    SECRET_KEY,
-    { expiresIn: '7d' },
-  );
-};
+const generateToken = (payload) => jwt.sign(
+  payload,
+  SECRET_KEY,
+  { expiresIn: '7d' },
+);
 
 /*
 const handleError = (err, res) => {

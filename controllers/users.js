@@ -17,7 +17,9 @@ module.exports.login = (req, res, next) => {
       if (!matched) {
         throw new AuthError();
       }
-      const token = generateToken({ _id: user._id });
+      const token = generateToken({ _id: user._id.toString() });
+      console.log('user._id = ', user._id);
+      console.log('token = ', token);
       return res.status(httpStatus.OK).send({ authToken: token });
     })
     .catch(next);
