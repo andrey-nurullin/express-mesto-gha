@@ -9,7 +9,7 @@ cardRouter.get('/', getCards);
 
 cardRouter.post('/', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
+    name: Joi.string().min(2).max(30).required(),
     link: Joi.string().pattern(URL_PATTERN).required(),
   }),
 }), createCard);
