@@ -8,17 +8,18 @@ const SALT_ROUNDS = 10;
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-
+  let userId;
   User.findOne({ email })
     .orFail(() => new AuthError())
     .select('+password')
     .then((user) => {
-      const matched = bcrypt.compare(password, user.password);
-      if (!matched) {
-        throw new AuthError();
-      }
-      const token = generateToken({ _id: user._id.toString() });
-      return res.status(httpStatus.OK).send({ authToken: token });
+      userId = user._id.toString();
+      return bcrypt.compare(password, user.password);
+    })
+    .then((match) => {
+      if (!match) throw new AuthError();
+      const token = generateToken({ _id: userId });
+      res.status(httpStatus.OK).send({ authToken: token });
     })
     .catch(next);
 };
