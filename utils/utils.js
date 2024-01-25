@@ -22,23 +22,6 @@ const generateToken = (payload) => jwt.sign(
   { expiresIn: '7d' },
 );
 
-/*
-const handleError = (err, res) => {
-  switch (err.name) {
-    case 'ValidationError':
-    case 'CastError':
-      return res.status(httpStatus.BAD_REQUEST).send({ message: 'Некорректные данные' });
-    case 'NotFoundError':
-      return res.status(httpStatus.NOT_FOUND).send({ message: 'Запрашиваемый ресурс не найден' });
-    case 'ForbiddenError':
-      return res.status(httpStatus.FORBIDDEN).send({ message: 'Недостаточно прав' });
-    case 'AuthError':
-      return res.status(httpStatus.UNAUTHORIZED).send({ message: 'Ошибка авторизации' });
-    default:
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({ message: 'Ошибка сервера' });
-  }
-};
-*/
 class NotFoundError extends Error {
   constructor(message = 'Запрашиваемый ресурс не найден') {
     super(message);
